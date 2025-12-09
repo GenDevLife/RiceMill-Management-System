@@ -1,138 +1,160 @@
 # RiceMill Management System
 
-### An Internet Programming Project from Naresuan University
+### ระบบจัดการโรงสีข้าว - Tech City
 
-This repository showcases a web application for managing rice mill operations, including:
+โปรเจคนี้พัฒนาขึ้นสำหรับจัดการงานด้านต่างๆ ของโรงสีข้าว ประกอบด้วย:
 
-- **Member Registration** (storing customer information)
-- **Product Purchase** (rice bran, husk, broken rice, etc.)
-- **Rice Mill Services** (milling, drying, and cleaning)
-- **Points Accumulation** (earning points from each purchase)
-- **Promotions** (redeemable when specific point thresholds are reached)
-- **Receipts** (detailed invoices that can be printed or exported)
-- **Owner Dashboard** (statistics, charts, and overall system monitoring)
+- **ระบบสมาชิก** - จัดเก็บข้อมูลลูกค้า
+- **ระบบสั่งซื้อสินค้า** - รำข้าว, แกลบ, ข้าวท่อน, ข้าวปลาย
+- **ระบบบริการสีข้าว** - สีข้าว, คัด/ฝัดเมล็ดข้าว, อบข้าว
+- **ระบบคะแนนสะสม** - สะสมแต้มจากการซื้อสินค้า/ใช้บริการ
+- **ระบบโปรโมชั่น** - แลกคะแนนเป็นบริการฟรี
+- **ระบบใบเสร็จ** - พิมพ์/ส่งออกใบเสร็จ
+- **Dashboard สำหรับเจ้าของ** - ดูสถิติและรายงานต่างๆ
 
-## Features
+## 📁 โครงสร้างโปรเจค (หลัง Refactor)
 
-1. **User Registration and Login**  
-   - Securely store user details, such as name, address, phone number, and registration date.  
-   - Manage user sessions with basic authentication (owner login included).
-
-2. **Product Purchase**  
-   - Provide product options with prices per kilogram (e.g., rice bran, husk).  
-   - Calculate the total cost based on user-selected quantities.
-
-3. **Rice Mill Services**  
-   - Offer services like milling, drying, and cleaning, charged per bucket.  
-   - Permit multiple services to be selected in one order.
-
-4. **Points System**  
-   - Convert total purchase amounts into points (e.g., 1 point per 100 THB).  
-   - Track and update points in the database, allowing users to earn and spend them.
-
-5. **Promotional Offers**  
-   - Let users redeem accumulated points for promotional packages, such as free drying or other services.
-
-6. **Receipts and Summaries**  
-   - Generate receipt pages for both products and services.  
-   - Summaries show itemized costs, points gained, and points used before finalizing an order.
-
-7. **Owner Dashboard**  
-   - Exclusive login credentials for the mill owner or admin user (`owner` / `12345678` by default).  
-   - Provides charts and statistics (e.g., sales distribution, frequent services).
-
-## Project Structure
-
-```plaintext
-RiceMillProject
-├── index.html
-├── login.php
-├── member.php
-├── member1.php
-├── member2.php
-├── member3.php
-├── OrderProduct.php
-├── OrderProduct2.php
-├── OrderService.php
-├── OrderService2.php
-├── point.php
-├── promotion.php
-├── README.md
-├── receiptall.php
-├── receiptproduct.php
-├── receiptpromotion.php
-├── register.php
-├── search.php
-├── summarize.php
-├── sumproduct.php
-├── sumservice.php
-├── sumservicepromotion.php
+```
+RiceMill-Management-System/
+├── index.php                    # หน้าแรก
 │
-├── assets
-│   ├── css
-│   │   ├── loginstyle.css
-│   │   ├── receipt.css
-│   │   └── style.css
+├── includes/                    # Core files
+│   ├── config.php               # Database configuration + constants
+│   ├── Database.php             # Database helper class (Prepared statements)
+│   ├── header.php               # Reusable header component
+│   └── footer.php               # Reusable footer component
+│
+├── pages/                       # All public pages
+│   ├── auth/                    # Authentication
+│   │   ├── login.php            # Owner login
+│   │   └── register.php         # Member registration
 │   │
-│   └── js
-│       ├── district.js
-│       ├── receipt.js
-│       ├── script.js
-│       └── table.js
+│   ├── members/                 # Member selection pages
+│   │   ├── select-for-service.php    # เลือกสมาชิก → บริการ+สินค้า
+│   │   ├── select-for-product.php    # เลือกสมาชิก → เฉพาะสินค้า
+│   │   └── select-for-promotion.php  # เลือกสมาชิก → แลกโปรโมชั่น
+│   │
+│   ├── orders/                  # Order processing
+│   │   ├── service.php          # สั่งบริการ (สำหรับ flow บริการ+สินค้า)
+│   │   ├── product.php          # สั่งสินค้า (หลังบริการ)
+│   │   ├── product-only.php     # สั่งเฉพาะสินค้า
+│   │   └── promotion.php        # แลกโปรโมชั่น
+│   │
+│   ├── summary/                 # Order summaries
+│   │   ├── all.php              # สรุปบริการ+สินค้า
+│   │   ├── product.php          # สรุปเฉพาะสินค้า
+│   │   └── service.php          # สรุปเฉพาะบริการ
+│   │
+│   ├── receipts/                # Receipt generation
+│   │   ├── all.php              # ใบเสร็จรวม
+│   │   ├── product.php          # ใบเสร็จสินค้า
+│   │   ├── service.php          # ใบเสร็จบริการ
+│   │   └── promotion.php        # ใบเสร็จโปรโมชั่น
+│   │
+│   ├── api/                     # API endpoints
+│   │   └── search-members.php   # AJAX member search
+│   │
+│   └── points.php               # คะแนนสะสม
 │
-├── DATABASE
-│   └── rice_mill_3.sql
+├── admin/                       # Admin dashboard
+│   └── index.php                # Main dashboard
 │
-├── img
-│   └── TechTeam.png
+├── assets/                      # Static files
+│   ├── css/
+│   │   ├── style.css            # Main stylesheet
+│   │   ├── login.css            # Login page styles
+│   │   └── receipt.css          # Receipt styles
+│   ├── js/
+│   │   ├── script.js            # Main JavaScript
+│   │   ├── district.js          # District/Subdistrict selection
+│   │   ├── table.js             # Table search functionality
+│   │   └── receipt.js           # Receipt functions
+│   └── images/
+│       └── TechTeam.png         # Logo
 │
-├── include
-│   └── config.php
+├── database/                    # Database files
+│   └── rice_mill.sql            # Database schema
 │
-├── owner
-│   ├── chart.php
-│   ├── index.php
-│   ├── Member.php
-│   ├── Product_Pie.php
-│   ├── Service_Pie.php
-│   ├── Sum_Service_and_Product.php
-│   ├── Total_Service_and_Product.php
-│   ├── css
-│   │   ├── bootstrap.min.css
-│   │   └── style.css
-│   ├── img
-│   │   └── TechTeam.png
-│   └── js
-│       ├── Chart.min.js
-│       ├── jquery.min.js
-│       ├── main.js
-│       ├── package-lock.json
-│       ├── package.json
-│       ├── script.js
-│       └── node_modules
-│           └── ...
-│
-├── lib
-│   ├── chart
-│   ├── easing
-│   ├── owlcarousel
-│   ├── tempusdominus
-│   └── waypoints
-│
-└── scss
-    └── ...
+└── README.md
 ```
-## Installation & Usage
-1. Clone or Download this repository
-```
+
+## 🔄 Mapping: ไฟล์เดิม → ไฟล์ใหม่
+
+| ไฟล์เดิม               | ไฟล์ใหม่                                 | หน้าที่                 |
+| ---------------------- | ---------------------------------------- | ----------------------- |
+| `index.html`           | `index.php`                              | หน้าหลัก                |
+| `login.php`            | `pages/auth/login.php`                   | เข้าสู่ระบบ             |
+| `register.php`         | `pages/auth/register.php`                | สมัครสมาชิก             |
+| `member.php`           | `pages/members/select-for-service.php`   | เลือกสมาชิก (บริการ)    |
+| `member1.php`          | `pages/members/select-for-product.php`   | เลือกสมาชิก (สินค้า)    |
+| `member3.php`          | `pages/members/select-for-promotion.php` | เลือกสมาชิก (โปรโมชั่น) |
+| `OrderService.php`     | `pages/orders/service.php`               | สั่งบริการ              |
+| `OrderProduct.php`     | `pages/orders/product.php`               | สั่งสินค้า (หลังบริการ) |
+| `OrderProduct2.php`    | `pages/orders/product-only.php`          | สั่งเฉพาะสินค้า         |
+| `promotion.php`        | `pages/orders/promotion.php`             | แลกโปรโมชั่น            |
+| `summarize.php`        | `pages/summary/all.php`                  | สรุปรวม                 |
+| `sumproduct.php`       | `pages/summary/product.php`              | สรุปสินค้า              |
+| `sumservice.php`       | `pages/summary/service.php`              | สรุปบริการ              |
+| `receiptall.php`       | `pages/receipts/all.php`                 | ใบเสร็จรวม              |
+| `receiptproduct.php`   | `pages/receipts/product.php`             | ใบเสร็จสินค้า           |
+| `receiptservice.php`   | `pages/receipts/service.php`             | ใบเสร็จบริการ           |
+| `receiptpromotion.php` | `pages/receipts/promotion.php`           | ใบเสร็จโปรโมชั่น        |
+| `point.php`            | `pages/points.php`                       | คะแนนสะสม               |
+| `search.php`           | `pages/api/search-members.php`           | API ค้นหาสมาชิก         |
+| `owner/`               | `admin/`                                 | Admin dashboard         |
+| `include/config.php`   | `includes/config.php`                    | Database config         |
+
+## ✨ การปรับปรุงที่ทำ
+
+### 1. โครงสร้างที่ดีขึ้น
+
+- จัดกลุ่มไฟล์ตามหน้าที่ (auth, members, orders, receipts, etc.)
+- ตั้งชื่อไฟล์ให้บ่งบอกหน้าที่ชัดเจน
+- สร้าง reusable components (header, footer)
+
+### 2. Security Improvements
+
+- ใช้ **Prepared Statements** ป้องกัน SQL Injection
+- Sanitize inputs ทุกครั้งก่อนใช้งาน
+- Session validation สำหรับ admin pages
+
+### 3. Code Quality
+
+- สร้าง Database helper class
+- กำหนด constants สำหรับราคาและ configuration
+- แยก helper functions ออกมาใช้ร่วมกัน
+
+### 4. Maintainability
+
+- ลด code duplication ด้วย reusable components
+- โครงสร้างที่ชัดเจนทำให้หาไฟล์ง่าย
+- Comments ภาษาไทยอธิบายการทำงาน
+
+## 🚀 วิธีติดตั้ง
+
+1. Clone หรือ Download repository
+
+```bash
 git clone https://github.com/GenDevLife/RiceMill-Management-System.git
 ```
-2. Place it under your local server folder (e.g., htdocs for XAMPP)
-3. Create a MySQL database (e.g., rice_mill_db).
-4. Import the file rice_mill_3.sql from the DATABASE folder into the database.
-5. Update include/config.php with the correct credentials (host, username, password, db name).
-6. Access the project via your browser:
+
+2. วางไว้ใน local server folder (เช่น htdocs สำหรับ XAMPP)
+
+3. สร้าง MySQL database และ import `database/rice_mill.sql`
+
+4. แก้ไข `includes/config.php` ตั้งค่าการเชื่อมต่อ database
+
+5. เข้าใช้งานผ่าน browser:
+
 ```
-http://localhost/RiceMillProject/index.html
+http://localhost/RiceMill-Management-System/
 ```
-For Owner Login: username: owner, password: 12345678 (default).
+
+## 👤 การเข้าสู่ระบบ Admin
+
+- **Username:** owner
+- **Password:** 12345678
+
+## 📝 License
+
+MIT License - สามารถนำไปใช้งานและพัฒนาต่อได้อย่างอิสระ

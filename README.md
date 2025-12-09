@@ -1,160 +1,244 @@
-# RiceMill Management System
+# 🌾 RiceMill Management System
 
-### ระบบจัดการโรงสีข้าว - Tech City
+<p align="center">
+  <img src="assets/images/TechTeam.png" alt="Tech City Logo" width="150">
+</p>
 
-โปรเจคนี้พัฒนาขึ้นสำหรับจัดการงานด้านต่างๆ ของโรงสีข้าว ประกอบด้วย:
+<p align="center">
+  <strong>ระบบจัดการโรงสีข้าว - Tech City</strong><br>
+  ระบบจัดการลูกค้า สั่งซื้อสินค้า บริการสีข้าว และคะแนนสะสม
+</p>
 
-- **ระบบสมาชิก** - จัดเก็บข้อมูลลูกค้า
-- **ระบบสั่งซื้อสินค้า** - รำข้าว, แกลบ, ข้าวท่อน, ข้าวปลาย
-- **ระบบบริการสีข้าว** - สีข้าว, คัด/ฝัดเมล็ดข้าว, อบข้าว
-- **ระบบคะแนนสะสม** - สะสมแต้มจากการซื้อสินค้า/ใช้บริการ
-- **ระบบโปรโมชั่น** - แลกคะแนนเป็นบริการฟรี
-- **ระบบใบเสร็จ** - พิมพ์/ส่งออกใบเสร็จ
-- **Dashboard สำหรับเจ้าของ** - ดูสถิติและรายงานต่างๆ
+<p align="center">
+  <img src="https://img.shields.io/badge/PHP-8.0+-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
+</p>
 
-## 📁 โครงสร้างโปรเจค (หลัง Refactor)
+---
+
+## 📖 เกี่ยวกับโปรเจค
+
+RiceMill Management System เป็นระบบจัดการโรงสีข้าวที่พัฒนาด้วย PHP และ SQLite สำหรับ:
+
+- 👥 **จัดการสมาชิก** - ลงทะเบียน ค้นหา และจัดเก็บข้อมูลลูกค้า
+- 🛒 **สั่งซื้อสินค้า** - รำข้าว, แกลบ, ข้าวท่อน, ข้าวปลาย
+- 🔧 **บริการสีข้าว** - สีข้าว, คัด/ฝัดเมล็ดข้าว, อบข้าว
+- ⭐ **ระบบคะแนนสะสม** - สะสมแต้มจากการซื้อสินค้า/ใช้บริการ
+- 🎁 **โปรโมชั่น** - แลกคะแนนเป็นบริการฟรี
+- 🧾 **ใบเสร็จ** - ออกใบเสร็จและพิมพ์ได้
+- 📊 **Dashboard** - สถิติยอดขายและข้อมูลสมาชิก
+
+---
+
+## ✨ Features
+
+| Feature                  | รายละเอียด                                        |
+| ------------------------ | ------------------------------------------------- |
+| 🔐 **Secure Database**   | ใช้ PDO Prepared Statements ป้องกัน SQL Injection |
+| 📱 **Responsive Design** | รองรับทุกขนาดหน้าจอ                               |
+| 🔍 **AJAX Search**       | ค้นหาสมาชิกแบบ Real-time                          |
+| 🖨️ **Print Ready**       | ใบเสร็จพร้อมพิมพ์                                 |
+| 📦 **Portable Database** | ใช้ SQLite ไม่ต้องติดตั้ง MySQL                   |
+| 🎨 **Modern UI**         | ออกแบบสวยงามด้วย CSS Variables                    |
+
+---
+
+## 🚀 Quick Start
+
+### ความต้องการ
+
+- PHP 8.0 หรือสูงกว่า
+- SQLite3 Extension (มาพร้อมกับ PHP)
+
+### การติดตั้ง
+
+1. **Clone repository**
+
+   ```bash
+   git clone https://github.com/GenDevLife/RiceMill-Management-System.git
+   cd RiceMill-Management-System
+   ```
+
+2. **สร้าง Database**
+
+   ```bash
+   php database/setup.php
+   ```
+
+3. **เริ่ม Server**
+
+   ```bash
+   php -S localhost:8080
+   ```
+
+4. **เปิด Browser**
+   ```
+   http://localhost:8080
+   ```
+
+---
+
+## 📁 โครงสร้างโปรเจค
 
 ```
 RiceMill-Management-System/
-├── index.php                    # หน้าแรก
-│
-├── includes/                    # Core files
-│   ├── config.php               # Database configuration + constants
-│   ├── Database.php             # Database helper class (Prepared statements)
-│   ├── header.php               # Reusable header component
-│   └── footer.php               # Reusable footer component
-│
-├── pages/                       # All public pages
-│   ├── auth/                    # Authentication
-│   │   ├── login.php            # Owner login
-│   │   └── register.php         # Member registration
-│   │
-│   ├── members/                 # Member selection pages
-│   │   ├── select-for-service.php    # เลือกสมาชิก → บริการ+สินค้า
-│   │   ├── select-for-product.php    # เลือกสมาชิก → เฉพาะสินค้า
-│   │   └── select-for-promotion.php  # เลือกสมาชิก → แลกโปรโมชั่น
-│   │
-│   ├── orders/                  # Order processing
-│   │   ├── service.php          # สั่งบริการ (สำหรับ flow บริการ+สินค้า)
-│   │   ├── product.php          # สั่งสินค้า (หลังบริการ)
-│   │   ├── product-only.php     # สั่งเฉพาะสินค้า
-│   │   └── promotion.php        # แลกโปรโมชั่น
-│   │
-│   ├── summary/                 # Order summaries
-│   │   ├── all.php              # สรุปบริการ+สินค้า
-│   │   ├── product.php          # สรุปเฉพาะสินค้า
-│   │   └── service.php          # สรุปเฉพาะบริการ
-│   │
-│   ├── receipts/                # Receipt generation
-│   │   ├── all.php              # ใบเสร็จรวม
-│   │   ├── product.php          # ใบเสร็จสินค้า
-│   │   ├── service.php          # ใบเสร็จบริการ
-│   │   └── promotion.php        # ใบเสร็จโปรโมชั่น
-│   │
-│   ├── api/                     # API endpoints
-│   │   └── search-members.php   # AJAX member search
-│   │
-│   └── points.php               # คะแนนสะสม
-│
-├── admin/                       # Admin dashboard
-│   └── index.php                # Main dashboard
-│
-├── assets/                      # Static files
+├── index.php                 # หน้าหลัก
+├── admin/                    # Admin Dashboard
+│   └── index.php
+├── assets/                   # Static files
 │   ├── css/
-│   │   ├── style.css            # Main stylesheet
-│   │   ├── login.css            # Login page styles
-│   │   └── receipt.css          # Receipt styles
-│   ├── js/
-│   │   ├── script.js            # Main JavaScript
-│   │   ├── district.js          # District/Subdistrict selection
-│   │   ├── table.js             # Table search functionality
-│   │   └── receipt.js           # Receipt functions
+│   │   ├── style.css         # Main stylesheet
+│   │   ├── login.css         # Login page
+│   │   └── receipt.css       # Receipt styling
 │   └── images/
-│       └── TechTeam.png         # Logo
-│
-├── database/                    # Database files
-│   └── rice_mill.sql            # Database schema
-│
+│       └── TechTeam.png      # Logo
+├── database/
+│   ├── ricemill.db           # SQLite Database
+│   └── setup.php             # Database setup script
+├── includes/
+│   ├── config.php            # Configuration & helpers
+│   ├── Database.php          # Database helper class
+│   ├── header.php            # Reusable header
+│   └── footer.php            # Reusable footer
+├── pages/
+│   ├── api/                  # API endpoints
+│   │   └── search-members.php
+│   ├── auth/                 # Authentication
+│   │   ├── login.php
+│   │   └── register.php
+│   ├── members/              # Member selection
+│   │   ├── select-for-service.php
+│   │   ├── select-for-product.php
+│   │   └── select-for-promotion.php
+│   ├── orders/               # Order processing
+│   │   ├── service.php
+│   │   ├── product.php
+│   │   ├── product-only.php
+│   │   └── promotion.php
+│   ├── receipts/             # Receipt generation
+│   │   ├── all.php
+│   │   ├── product.php
+│   │   ├── service.php
+│   │   └── promotion.php
+│   ├── summary/              # Order summaries
+│   │   ├── all.php
+│   │   ├── product.php
+│   │   └── service.php
+│   └── points.php            # Points leaderboard
 └── README.md
 ```
 
-## 🔄 Mapping: ไฟล์เดิม → ไฟล์ใหม่
+---
 
-| ไฟล์เดิม               | ไฟล์ใหม่                                 | หน้าที่                 |
-| ---------------------- | ---------------------------------------- | ----------------------- |
-| `index.html`           | `index.php`                              | หน้าหลัก                |
-| `login.php`            | `pages/auth/login.php`                   | เข้าสู่ระบบ             |
-| `register.php`         | `pages/auth/register.php`                | สมัครสมาชิก             |
-| `member.php`           | `pages/members/select-for-service.php`   | เลือกสมาชิก (บริการ)    |
-| `member1.php`          | `pages/members/select-for-product.php`   | เลือกสมาชิก (สินค้า)    |
-| `member3.php`          | `pages/members/select-for-promotion.php` | เลือกสมาชิก (โปรโมชั่น) |
-| `OrderService.php`     | `pages/orders/service.php`               | สั่งบริการ              |
-| `OrderProduct.php`     | `pages/orders/product.php`               | สั่งสินค้า (หลังบริการ) |
-| `OrderProduct2.php`    | `pages/orders/product-only.php`          | สั่งเฉพาะสินค้า         |
-| `promotion.php`        | `pages/orders/promotion.php`             | แลกโปรโมชั่น            |
-| `summarize.php`        | `pages/summary/all.php`                  | สรุปรวม                 |
-| `sumproduct.php`       | `pages/summary/product.php`              | สรุปสินค้า              |
-| `sumservice.php`       | `pages/summary/service.php`              | สรุปบริการ              |
-| `receiptall.php`       | `pages/receipts/all.php`                 | ใบเสร็จรวม              |
-| `receiptproduct.php`   | `pages/receipts/product.php`             | ใบเสร็จสินค้า           |
-| `receiptservice.php`   | `pages/receipts/service.php`             | ใบเสร็จบริการ           |
-| `receiptpromotion.php` | `pages/receipts/promotion.php`           | ใบเสร็จโปรโมชั่น        |
-| `point.php`            | `pages/points.php`                       | คะแนนสะสม               |
-| `search.php`           | `pages/api/search-members.php`           | API ค้นหาสมาชิก         |
-| `owner/`               | `admin/`                                 | Admin dashboard         |
-| `include/config.php`   | `includes/config.php`                    | Database config         |
+## 🗄️ Database Schema
 
-## ✨ การปรับปรุงที่ทำ
+ระบบใช้ **SQLite** database พร้อม 4 ตารางหลัก:
 
-### 1. โครงสร้างที่ดีขึ้น
+### `members` - สมาชิก
 
-- จัดกลุ่มไฟล์ตามหน้าที่ (auth, members, orders, receipts, etc.)
-- ตั้งชื่อไฟล์ให้บ่งบอกหน้าที่ชัดเจน
-- สร้าง reusable components (header, footer)
+| Column      | Type         | Description  |
+| ----------- | ------------ | ------------ |
+| id          | INTEGER      | Primary Key  |
+| name        | VARCHAR(100) | ชื่อ-นามสกุล |
+| phone       | VARCHAR(20)  | เบอร์โทร     |
+| points      | INTEGER      | คะแนนสะสม    |
+| address     | VARCHAR(200) | ที่อยู่      |
+| subdistrict | VARCHAR(100) | ตำบล         |
+| district    | VARCHAR(100) | อำเภอ        |
+| province    | VARCHAR(100) | จังหวัด      |
+| created_at  | DATE         | วันที่สมัคร  |
 
-### 2. Security Improvements
+### `order_services` - รายการบริการ
 
-- ใช้ **Prepared Statements** ป้องกัน SQL Injection
-- Sanitize inputs ทุกครั้งก่อนใช้งาน
-- Session validation สำหรับ admin pages
+### `order_products` - รายการสินค้า
 
-### 3. Code Quality
+### `promotions` - การแลกโปรโมชั่น
 
-- สร้าง Database helper class
-- กำหนด constants สำหรับราคาและ configuration
-- แยก helper functions ออกมาใช้ร่วมกัน
+---
 
-### 4. Maintainability
+## 💰 ราคาและคะแนน
 
-- ลด code duplication ด้วย reusable components
-- โครงสร้างที่ชัดเจนทำให้หาไฟล์ง่าย
-- Comments ภาษาไทยอธิบายการทำงาน
+### ราคาบริการ
 
-## 🚀 วิธีติดตั้ง
+| บริการ           | ราคา      |
+| ---------------- | --------- |
+| สีข้าว           | 8 บาท/กก. |
+| คัด/ฝัดเมล็ดข้าว | 3 บาท/กก. |
+| อบข้าว           | 8 บาท/กก. |
 
-1. Clone หรือ Download repository
+### ราคาสินค้า
 
-```bash
-git clone https://github.com/GenDevLife/RiceMill-Management-System.git
-```
+| สินค้า   | ราคา       |
+| -------- | ---------- |
+| รำข้าว   | 8 บาท/กก.  |
+| แกลบ     | 8 บาท/กก.  |
+| ข้าวท่อน | 7 บาท/กก.  |
+| ข้าวปลาย | 14 บาท/กก. |
 
-2. วางไว้ใน local server folder (เช่น htdocs สำหรับ XAMPP)
+### ระบบคะแนน
 
-3. สร้าง MySQL database และ import `database/rice_mill.sql`
+- ได้รับ **1 คะแนน** ต่อทุกๆ 100 บาท
+- แลก **500 คะแนน** = สีข้าวฟรี 50 กก.
+- แลก **200 คะแนน** = คัด/ฝัดฟรี 50 กก.
+- แลก **500 คะแนน** = อบข้าวฟรี 50 กก.
 
-4. แก้ไข `includes/config.php` ตั้งค่าการเชื่อมต่อ database
+---
 
-5. เข้าใช้งานผ่าน browser:
+## 🔐 Admin Login
 
-```
-http://localhost/RiceMill-Management-System/
-```
+เข้าสู่ระบบ Admin Dashboard:
 
-## 👤 การเข้าสู่ระบบ Admin
+| Field    | Value                                  |
+| -------- | -------------------------------------- |
+| URL      | `/admin/` หรือ `/pages/auth/login.php` |
+| Username | `owner`                                |
+| Password | `12345678`                             |
 
-- **Username:** owner
-- **Password:** 12345678
+---
+
+## 📸 Screenshots
+
+> _Coming soon_
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** PHP 8.x
+- **Database:** SQLite 3
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Library:** jQuery 3.5.1
+- **Font:** Kanit (Google Fonts)
+
+---
+
+## 🤝 Contributing
+
+ยินดีรับ contributions! กรุณา:
+
+1. Fork repository
+2. สร้าง feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. เปิด Pull Request
+
+---
 
 ## 📝 License
 
 MIT License - สามารถนำไปใช้งานและพัฒนาต่อได้อย่างอิสระ
+
+---
+
+## 👨‍💻 Author
+
+**Tech City Team**
+
+- GitHub: [@GenDevLife](https://github.com/GenDevLife)
+
+---
+
+<p align="center">
+  Made with ❤️ in Phichit, Thailand
+</p>
